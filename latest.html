@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DIRTY Latest Preview</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+#site{border:0;width:100%;height:100%;display:block;background:#000}
+#loading{position:fixed;inset:0;display:grid;place-items:center;background:#000;color:#fff;font:12px Arial,sans-serif;letter-spacing:.25em;z-index:10;transition:opacity .4s}
+</style>
+</head>
+<body>
+<div id="loading">DIRTY / LOADING</div>
+<iframe id="site" src="/index.html?base=1"></iframe>
+<script>
+const frame=document.getElementById('site');
+const loading=document.getElementById('loading');
+frame.addEventListener('load',()=>{
+  const w=frame.contentWindow, d=frame.contentDocument;
+  if(!w||!d)return;
+  const style=d.createElement('style');
+  style.textContent=`
+  /* PATCH v9 */
+  .experience{height:980vh!important}
+  .sandal{height:360vh!important;background:#10d9de!important}
+  .sandal-stage{height:100vh!important}
+  .lavender{height:470vh!important}
+  .bloom{max-width:88px!important}
+  .placeholder{display:none!important}
+  #patch-mint-sandal,#patch-sandal-lav,#patch-black{position:absolute;inset:0;pointer-events:none}
+  #patch-mint-sandal{z-index:20;opacity:0;background:
+    radial-gradient(ellipse 32% 15% at 22% 16%,rgba(255,255,255,.52),transparent 64%),
+    linear-gradient(to bottom,#e8ffff 0%,#b9f4f2 22%,#88e6e7 58%,#10d9de 100%)}
+  #patch-sandal-lav{z-index:20;opacity:0;background:
+    linear-gradient(to bottom,rgba(132,229,231,0) 0%,rgba(116,198,159,.16) 30%,rgba(147,189,105,.62) 72%,rgba(147,189,105,.98) 100%)}
+  #patch-black{z-index:30;opacity:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 24%,rgba(0,0,0,.15) 50%,rgba(0,0,0,.58) 76%,#000 100%)}
+  #patch-segment{height:420vh;background:#000;color:#fff}
+  #patch-segment .pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
+  #patch-segment .wrap{width:min(1180px,92vw);opacity:0;transform:translateY(28px);font-family:Arial,sans-serif}
+  #patch-segment .eyebrow{text-align:center;font-size:11px;letter-spacing:.34em;color:rgba(255,255,255,.48)}
+  #patch-segment h2{text-align:center;font-size:clamp(40px,5vw,78px);line-height:1.02;margin:18px 0 0;font-weight:800}
+  #patch-segment .sub{max-width:820px;margin:20px auto 0;text-align:center;color:rgba(255,255,255,.64);font-size:14px;line-height:1.8}
+  #patch-segment .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:46px}
+  #patch-segment .card{min-height:285px;padding:28px 26px;border:1px solid rgba(255,255,255,.10);border-radius:20px;background:rgba(255,255,255,.035);opacity:0;transform:translateY(30px)}
+  #patch-segment .num{font-size:11px;letter-spacing:.22em;color:rgba(255,255,255,.42)}
+  #patch-segment h3{font-size:29px;margin:15px 0 0}
+  #patch-segment .label{margin-top:8px;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.46)}
+  #patch-segment .rule{width:42px;height:1px;background:rgba(255,255,255,.2);margin:20px 0}
+  #patch-segment .people{font-size:12px;letter-spacing:.13em;color:rgba(255,255,255,.44)}
+  #patch-segment p{font-size:16px;line-height:1.65;color:rgba(255,255,255,.80)}
+  #patch-segment .tags{margin-top:18px;font-size:12px;letter-spacing:.15em;color:rgba(255,255,255,.48)}
+  .patch-sprig{position:absolute;transform-origin:50% 100%;opacity:0;z-index:12;pointer-events:none}
+  .patch-sprig .stem{position:absolute;left:50%;bottom:0;width:2px;height:100%;background:rgba(89,109,58,.8);transform:translateX(-50%)}
+  .patch-sprig .bud{position:absolute;width:9px;height:13px;border-radius:60% 60% 50% 50%;background:#8f7ab4;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+  @media(max-width:900px){#patch-segment .cards{grid-template-columns:1fr}}
+  `;
+  d.head.appendChild(style);
+
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const clamp=(v,a,b)=>Math.min(Math.max(v,a),b);
+  const experience=d.getElementById('experience');
+  const stage=d.getElementById('stage');
+  const productWrap=d.getElementById('productWrap');
+  const product=d.getElementById('product');
+  const heroLogo=d.getElementById('heroLogo');
+  const paintWall=d.getElementById('paintWall');
+  const sandal=d.getElementById('sandal');
+  const sandalStage=d.getElementById('sandalStage');
+  const leafField=d.getElementById('leafField');
+  const lavender=d.getElementById('lavender');
+  const lavenderStage=d.getElementById('lavenderStage');
+
+  /* 1. Align standalone logo exactly over bottle logo and make both shrink together. */
+  function introPatch(){
+    if(!experience||!productWrap||!product||!heroLogo)return;
+    const r=experience.getBoundingClientRect(), total=experience.offsetHeight-w.innerHeight;
+    const p=clamp(-r.top/total,0,1), reveal=1-Math.pow(1-clamp((p-.08)/.44,0,1),3);
+    const H=Math.min(w.innerHeight*.82,900), W=H*(1173/1341), scale=4.25+(1-4.25)*reveal;
+    productWrap.style.width=W+'px'; productWrap.style.height=H+'px';
+    const cx=w.innerWidth/2,cy=w.innerHeight/2,fx=.556266,fy=.606637;
+    const startLeft=cx-scale*W*fx,startTop=cy-scale*H*fy,endLeft=cx-W/2,endTop=cy-H/2,pe=ease(reveal);
+    productWrap.style.left=(startLeft+(endLeft-startLeft)*pe)+'px';
+    productWrap.style.top=(startTop+(endTop-startTop)*pe)+'px';
+    productWrap.style.transform='scale('+scale+')';
+    productWrap.style.transformOrigin='0 0';
+    heroLogo.style.left='55.6266%';heroLogo.style.top='60.6637%';heroLogo.style.width='31.1168%';
+    heroLogo.style.transform='translate(-50%,-50%)';
+    heroLogo.style.opacity=String(1-clamp((p-.34)/.18,0,1));
+    product.style.opacity=String(clamp((p-.13)/.15,0,1)*(1-clamp((p-.90)/.08,0,1)));
+  }
+
+  /* 2. Restore a paint burst interaction independent from the base script. */
+  function paintBurst(ev){
+    if(!stage||!paintWall||!experience)return;
+    const er=experience.getBoundingClientRect(),total=experience.offsetHeight-w.innerHeight,p=clamp(-er.top/total,0,1);
+    if(p<.42||p>.73)return;
+    const r=stage.getBoundingClientRect(),x=ev.clientX-r.left,y=ev.clientY-r.top;
+    const count=16;
+    for(let i=0;i<count;i++){
+      const b=d.createElement('div');
+      const core=i<3, size=core?(100+Math.random()*90):(12+Math.random()*38);
+      const a=Math.random()*Math.PI*2,dist=core?Math.random()*55:70+Math.random()*190;
+      b.style.cssText='position:absolute;left:'+x+'px;top:'+y+'px;width:'+size+'px;height:'+(size*(.72+Math.random()*.45))+'px;background:#10d9de;border-radius:'+(35+Math.random()*30)+'% '+(35+Math.random()*30)+'% '+(35+Math.random()*30)+'% '+(35+Math.random()*30)+'%;opacity:0;transform:translate(-50%,-50%) scale(.05);z-index:4;pointer-events:none;filter:blur(.5px)';
+      paintWall.appendChild(b);
+      requestAnimationFrame(()=>{
+        b.style.transition='transform 650ms cubic-bezier(.15,.82,.2,1),opacity 180ms ease';
+        b.style.opacity='.98';
+        b.style.transform='translate(calc(-50% + '+(Math.cos(a)*dist)+'px),calc(-50% + '+(Math.sin(a)*dist)+'px)) scale(1) rotate('+(Math.random()*110-55)+'deg)';
+      });
+    }
+  }
+  stage&&stage.addEventListener('click',paintBurst,true);
+
+  /* 3. Smooth transition overlays. */
+  if(sandalStage){
+    const o=d.createElement('div');o.id='patch-mint-sandal';sandalStage.appendChild(o);
+  }
+  if(lavenderStage){
+    const o=d.createElement('div');o.id='patch-sandal-lav';lavenderStage.appendChild(o);
+    const b=d.createElement('div');b.id='patch-black';lavenderStage.appendChild(b);
+  }
+
+  /* 4-5. Fill Sandalwood with much denser independently moving leaves. */
+  if(leafField){
+    const originals=[...leafField.querySelectorAll('.leaf')];
+    const pool=originals.length?originals:[...leafField.querySelectorAll('img')];
+    if(pool.length){
+      while(leafField.children.length<108){
+        const src=pool[Math.floor(Math.random()*pool.length)];
+        const c=src.cloneNode(true);c.classList.add('leaf');
+        c.style.left=(Math.random()*106-3)+'%';c.style.top=(Math.random()*106-3)+'%';
+        c.style.width=(220+Math.random()*120)+'px';
+        c.dataset.baseRot=String(Math.random()*64-32);c.dataset.phase=String(Math.random()*6.28);
+        leafField.appendChild(c);
+      }
+    }
+    const leaves=[...leafField.querySelectorAll('.leaf')];
+    leaves.forEach((el,i)=>{
+      if(!el.dataset.baseRot)el.dataset.baseRot=String(Math.random()*64-32);
+      if(!el.dataset.phase)el.dataset.phase=String(Math.random()*6.28);
+      el._tx=0;el._ty=0;el._rr=+el.dataset.baseRot;
+    });
+    let mx=-9999,my=-9999;
+    sandalStage.addEventListener('mousemove',e=>{const r=sandalStage.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+    sandalStage.addEventListener('mouseleave',()=>{mx=-9999;my=-9999});
+    function wind(){
+      const r=sandalStage.getBoundingClientRect(),t=performance.now()/1000;
+      leaves.forEach((el,i)=>{
+        const br=el.getBoundingClientRect(),cx=br.left-r.left+br.width/2,cy=br.top-r.top+br.height/2,dx=cx-mx,dy=cy-my,dist=Math.hypot(dx,dy);
+        const inf=Math.pow(Math.max(0,1-dist/290),1.15),px=dx/(dist||1)*160*inf,py=dy/(dist||1)*105*inf;
+        const sx=Math.sin(t*1.35+i*.17)*3,sy=Math.cos(t*1.05+i*.21)*2;
+        const tr=(+el.dataset.baseRot)+(-dx/(dist||1))*38*inf+Math.sin(t*.9+(+el.dataset.phase))*1.8;
+        el._tx+=(px+sx-el._tx)*.12;el._ty+=(py+sy-el._ty)*.12;el._rr+=(tr-el._rr)*.12;
+        el.style.transform='translate('+el._tx+'px,'+el._ty+'px) rotate('+el._rr+'deg)';
+      });
+      w.requestAnimationFrame(wind);
+    }
+    wind();
+  }
+
+  /* 7. Small lavender growth effect while keeping the existing meadow. */
+  if(lavenderStage){
+    lavenderStage.addEventListener('click',e=>{
+      const r=lavenderStage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+      if(y<w.innerHeight*.22)return;
+      for(let s=0;s<3;s++){
+        const spr=d.createElement('div');spr.className='patch-sprig';
+        const h=46+Math.random()*34;
+        spr.style.left=(x+(Math.random()-.5)*58)+'px';spr.style.top=(y+Math.random()*16)+'px';
+        spr.style.width='24px';spr.style.height=h+'px';spr.style.transform='translate(-50%,-100%) scaleY(.08)';
+        spr.innerHTML='<div class="stem"></div>';
+        for(let j=0;j<5;j++){
+          const bud=d.createElement('i');bud.className='bud';bud.style.left=(j%2?10:2)+'px';bud.style.bottom=(12+j*8)+'px';spr.appendChild(bud);
+        }
+        lavenderStage.appendChild(spr);
+        requestAnimationFrame(()=>{spr.style.transition='transform 800ms cubic-bezier(.15,.84,.2,1),opacity 230ms ease';spr.style.opacity='1';spr.style.transform='translate(-50%,-100%) scaleY(1)'});
+      }
+    },true);
+  }
+
+  /* 8. Add final black segment explanation screen. */
+  const seg=d.createElement('section');seg.id='patch-segment';
+  seg.innerHTML='<div class="pin"><div class="wrap"><div class="eyebrow">OFFICIAL NOTES × CONSUMER LANGUAGE</div><h2>HOW DIRTY<br>IS FELT</h2><div class="sub">The product page names the notes. Consumers translate them into everyday sensory language. This prototype turns that translation into an experience instead of asking users to imagine a scent from ingredients alone.</div><div class="cards"><div class="card"><div class="num">01 / OPENING</div><h3>SPEARMINT</h3><div class="label">OFFICIAL NOTE</div><div class="rule"></div><div class="people">WHAT PEOPLE SMELL</div><p>Cool, fresh, clean — an immediate refreshing first impression.</p><div class="tags">COOL · FRESH · CLEAN</div></div><div class="card"><div class="num">02 / BODY</div><h3>SANDALWOOD</h3><div class="label">OFFICIAL NOTE</div><div class="rule"></div><div class="people">WHAT PEOPLE SMELL</div><p>Soft, creamy woodiness that smooths the sharper opening without feeling heavy.</p><div class="tags">SOFT · CREAMY · WOODY</div></div><div class="card"><div class="num">03 / SETTLE</div><h3>LAVENDER</h3><div class="label">OFFICIAL NOTE</div><div class="rule"></div><div class="people">WHAT PEOPLE SMELL</div><p>A gentler, calmer finish layered over the summer freshness.</p><div class="tags">SOFT · CALM · GENTLE</div></div></div></div></div>';
+  d.body.appendChild(seg);
+
+  function patchScroll(){
+    introPatch();
+    if(experience&&sandal){
+      const sr=sandal.getBoundingClientRect(),sp=clamp(-sr.top/(sandal.offsetHeight-w.innerHeight),0,1);
+      const ms=d.getElementById('patch-mint-sandal');if(ms)ms.style.opacity=String(1-ease(clamp(sp/.26,0,1)));
+    }
+    if(sandal&&lavender){
+      const lr=lavender.getBoundingClientRect(),lp=clamp(-lr.top/(lavender.offsetHeight-w.innerHeight),0,1);
+      const sl=d.getElementById('patch-sandal-lav');if(sl)sl.style.opacity=String(1-ease(clamp(lp/.28,0,1)));
+      const bk=d.getElementById('patch-black');if(bk)bk.style.opacity=String(ease(clamp((lp-.68)/.22,0,1)));
+    }
+    const r=seg.getBoundingClientRect(),p=clamp(-r.top/(seg.offsetHeight-w.innerHeight),0,1),wrap=seg.querySelector('.wrap');
+    const show=ease(clamp((p-.20)/.16,0,1));wrap.style.opacity=String(show);wrap.style.transform='translateY('+(28-28*show)+'px)';
+    [...seg.querySelectorAll('.card')].forEach((c,i)=>{const v=ease(clamp((p-(.33+i*.07))/.13,0,1));c.style.opacity=String(v);c.style.transform='translateY('+(30-30*v)+'px)'});
+  }
+  w.addEventListener('scroll',patchScroll,{passive:true});w.addEventListener('resize',patchScroll);patchScroll();
+  loading.style.opacity='0';setTimeout(()=>loading.remove(),450);
+});
+</script>
+</body>
+</html>
